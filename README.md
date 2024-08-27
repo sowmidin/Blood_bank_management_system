@@ -247,7 +247,7 @@ Request Body:
  ```JSON
 {
   "blood_group": "string",
-  "units": "int
+  "units": "int"
 }
 ```
 
@@ -266,7 +266,7 @@ Response:
  ```JSON
 {
   "blood_group": "string",
-  "units": "int
+  "units": "int"
 }
 ```
 
@@ -288,7 +288,7 @@ Response:
   "message":  "Inventory blood group details for <BLOOD_GROUP> and units <QUANTITY> successfully updated"
 }
 
-
+```
 
 
 ### Hospital requests for blood 

@@ -63,11 +63,8 @@ class Login(Resource):
         return {'message': 'Invalid credentials'}, 401
     
 
-@auth_ns.route('/test')
-class test(Resource):
-    @token_required
-    def get(self):
-        return {"message":"token is valid"}
+    
+
 
 
 

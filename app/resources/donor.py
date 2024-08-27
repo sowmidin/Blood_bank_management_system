@@ -6,7 +6,7 @@ from app.utils import token_required
 
 donor_ns = Namespace('donors',description="Donor management")
 
-
+Blood_groups = ["A+","A-","B+","B-","AB+","AB-","O+","O-"]
 donor_model = donor_ns.model('Donor',{
     'id':fields.Integer(readOnly = True),
     'name':fields.String(required = True,description="Donor name"),
@@ -34,14 +34,17 @@ class DonorList(Resource):
         return Donor.query.all()
     
     @donor_ns.expect(donor_model)
-    @donor_ns.marshal_with(donor_model,code=201)
+    @donor_ns.marshal_with(admin_model,code=201)
     @token_required
     def post(self):
         data = donor_ns.payload
+        blood_grp = data['blood_group']
+        if blood_grp not in Blood_groups:
+            return {'message':f'Invalid blood group . Please select from {Blood_groups}'},400
         new_donor = Donor(name=data['name'],age=data['age'],blood_group = data['blood_group'],email_id=data['email_id']) 
         db.session.add(new_donor)
         db.session.commit()
-        return new_donor,201
+        return {'message' : f'Donor details created for {new_donor.name}'},201
     
 
 @donor_ns.route('/<int:id>')

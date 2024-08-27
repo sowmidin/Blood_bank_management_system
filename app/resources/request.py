@@ -6,6 +6,8 @@ from flask import request
 
 blood_request_ns = Namespace('blood_request',description="Blood Unit Requests")
 
+Blood_groups = ["A+","A-","B+","B-","AB+","AB-","O+","O-"]
+
 blood_request_model = blood_request_ns.model('Request',{
     'blood_type':fields.String(required=True,description="Request blood group"),
     'units_needed':fields.Integer(required=True)
@@ -20,6 +22,8 @@ class BloodRequest(Resource):
     def post(self):
         data = blood_request_ns.payload
         blood_request_type = data['blood_type']
+        if blood_request_type not in Blood_groups:
+            return {'message':f'Invalid blood group . Please select from {Blood_groups}'},400
         units_needed = data['units_needed']
         blood_data = BloodDatabase.query.filter(BloodDatabase.blood_group == blood_request_type).first()
         print(f"blood data",blood_data)

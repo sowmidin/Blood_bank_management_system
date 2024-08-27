@@ -5,6 +5,7 @@ from .permissions import is_admin_or_donor_manager
 from app.utils import token_required
 from flask import request
 
+Blood_groups = ["A+","A-","B+","B-","AB+","AB-","O+","O-"]
 inventory_ns = Namespace('inventory',description="Blood Database management")
 
 inventory_model = inventory_ns.model('BloodDatabase', {
@@ -34,9 +35,10 @@ class Inventory(Resource):
         data = request.get_json()
         print(data)
         blood_group_name = data.get('blood_group')
+        if blood_group_name not in Blood_groups:
+            return {'message':f'Invalid blood group . Please select from {Blood_groups}'},400
         blood_group_name = str(blood_group_name)
         quantity = data.get('units')
-        print(quantity,"quantity")
         blood_type = BloodDatabase.query.filter_by(blood_group=blood_group_name).first()
         if blood_type:
             blood_type.units += quantity
@@ -54,6 +56,8 @@ class InventoryFetch(Resource):
     @inventory_ns.marshal_with(inventory_model)
     @token_required
     def get(self,id):
+        if id not in Blood_groups:
+            return {'message':f'Invalid blood group . Please select from {Blood_groups}'},400
         blood_details = BloodDatabase.query.filter(BloodDatabase.blood_group == id).first()
         print("blood_details",blood_details)
         if blood_details is not None:
@@ -69,6 +73,8 @@ class InventoryFetch(Resource):
             return {'message': 'Admin access required'}, 403
         data = inventory_ns.payload
         blood_details = BloodDatabase.query.filter(BloodDatabase.blood_group == id).first()
+        if blood_details not in Blood_groups:
+            return {'message':f'Invalid blood group . Please select from {Blood_groups}'},400
         if blood_details:
             blood_details.blood_group = data['blood_group']
             blood_details.units = data['units']
